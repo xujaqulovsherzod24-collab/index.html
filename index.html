@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haqiqiy Lorem Ipsum Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f1f5f9;
+            padding: 40px 20px;
+            color: #334155;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 750px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 28px;
+            color: #1e293b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .controls {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+        input[type="number"] {
+            width: 70px;
+            text-align: center;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-gen {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .btn-gen:hover {
+            background-color: #2563eb;
+        }
+        .btn-copy {
+            background-color: #10b981;
+            color: white;
+        }
+        .btn-copy:hover {
+            background-color: #059669;
+        }
+        .result-box {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 20px;
+            background: #fafafa;
+            min-height: 200px;
+            max-height: 450px;
+            overflow-y: auto;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .result-box p {
+            margin-bottom: 15px;
+        }
+        .result-box p:last-child {
+            margin-bottom: 0;
+        }
+        .result-box ul {
+            padding-left: 20px;
+        }
+        .result-box li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Lorem Ipsum Generator Pro</h1>
+        
+        <div class="controls">
+            <div class="input-group">
+                <label for="contentType">Turi:</label>
+                <select id="contentType">
+                    <option value="paragraphs">Paragraflar</option>
+                    <option value="words">So'zlar</option>
+                    <option value="lists">Ro'yxat (List)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="contentAmount">Soni:</label>
+                <input type="number" id="contentAmount" min="1" max="50" value="5">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-gen" onclick="generate()">Yaratish</button>
+                <button class="btn-copy" onclick="copyText()">Nusxalash</button>
+            </div>
+        </div>
+
+        <div class="result-box" id="output">Tugmani bosing va matn shu yerda paydo bo'ladi...</div>
+    </div>
+
+    <script>
+        // Haqiqiy lorem ipsum matnlari bazasi
+        const rawLoremDatabase = [
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac eros sed justo elementum facilisis. Morbi non massa sed diam rhoncus facilisis id ut dolor. In eget feugiat urna. Ut sit amet rhoncus purus. Aliquam efficitur erat arcu, vel sodales metus imperdiet rhoncus.",
+            "Nullam quis feugiat tortor. Vestibulum convallis, diam vitae hendrerit finibus, ex ante sodales mi, id feugiat sapien augue id nisl. Phasellus id elementum massa. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vivamus eleifend iaculis feugiat.",
+            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur sed lectus non erat egestas consequat ac vel erat.",
+            "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas.",
+            "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium.",
+            "Cras mattis consectetur purus sit amet fermentum. Donec sed odio dui. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod.",
+            "Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a."
+        ];
+
+        // So'zlar ro'yxatini shakllantirish
+        const wordsDatabase = rawLoremDatabase.join(" ").replace(/[.,]/g, "").toLowerCase().split(" ");
+
+        function generate() {
+            const type = document.getElementById('contentType').value;
+            const amount = parseInt(document.getElementById('contentAmount').value) || 1;
+            const output = document.getElementById('output');
+            
+            let finalHtml = "";
+
+            // 1. Paragraflar rejimi
+            if (type === "paragraphs") {
+                for (let i = 0; i < amount; i++) {
+                    const index = i % rawLoremDatabase.length;
+                    finalHtml += `<p>${rawLoremDatabase[index]}</p>`;
+                }
+            } 
+            // 2. So'zlar rejimi
+            else if (type === "words") {
+                let tempWords = [];
+                for (let i = 0; i < amount; i++) {
+                    const index = i % wordsDatabase.length;
+                    tempWords.push(wordsDatabase[index]);
+                }
+                let textResult = tempWords.join(" ");
+                // Birinchi harfni katta qilish va oxiriga nuqta qo'yish
+                textResult = textResult.charAt(0).toUpperCase() + textResult.slice(1) + ".";
+                finalHtml = `<p>${textResult}</p>`;
+            } 
+            // 3. Ro'yxat (List) rejimi
+            else if (type === "lists") {
+                finalHtml += "<ul>";
+                for (let i = 0; i < amount; i++) {
+                    const index = i % rawLoremDatabase.length;
+                    // Har bir qatorga bitta qisqa gap qo'yish
+                    const shortSentence = rawLoremDatabase[index].split(".")[0] + ".";
+                    finalHtml += `<li>${shortSentence}</li>`;
+                }
+                finalHtml += "</ul>";
+            }
+
+            output.innerHTML = finalHtml;
+        }
+
+        function copyText() {
+            const output = document.getElementById('output');
+            const defaultMessage = "Tugmani bosing va matn shu yerda paydo bo'ladi...";
+            
+            if (output.innerText === defaultMessage || output.innerText.trim() === "") {
+                alert("Nusxalash uchun avval matn yarating!");
+                return;
+            }
+
+            navigator.clipboard.writeText(output.innerText).then(() => {
+                alert("Matn muvaffaqiyatli nusxalandi! 📋");
+            }).catch(err => {
+                alert("Xatolik yuz berdi: " + err);
+            });
+        }
+    </script>
+</body>
+</html>
